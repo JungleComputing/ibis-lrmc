@@ -9,11 +9,11 @@ public class Message {
     
     public static final int LAST_PACKET = 1 << 31;
     
-    public short sender;
+    public int sender;
 
-    short refcount;
+    public short refcount;
     
-    public short [] destinations;
+    public int [] destinations;
     public int destinationsUsed;
            
     public int id;
@@ -34,18 +34,13 @@ public class Message {
         buffer = new byte[len];       
     }
        
-    //Message(int size, int destSize) { 
-    //    buffer = new byte[size];
-    //    destinations = new short[destSize];
-   // }
-   
-    void read(ReadMessage rm, int len, int dst) throws IOException { 
+    public void read(ReadMessage rm, int len, int dst) throws IOException { 
 
         this.off = 0;
         this.len = len;
         this.local = false;
         
-        sender = rm.readShort();        
+        sender = rm.readInt();        
         id = rm.readInt();
         num = rm.readInt();            
         
@@ -62,7 +57,7 @@ public class Message {
         if (dst > 0) {
             // TODO optimize!            
             if (destinations == null || destinations.length < dst) {
-                destinations = new short[dst];
+                destinations = new int[dst];
             } 
         
             rm.readArray(destinations, 0, dst);                       
@@ -71,7 +66,7 @@ public class Message {
         destinationsUsed = dst;
     } 
     
-    void write(WriteMessage wm, int fromDest) throws IOException { 
+    public void write(WriteMessage wm, int fromDest) throws IOException { 
         
         int destinationLength = destinationsUsed-fromDest; 
         
@@ -80,7 +75,7 @@ public class Message {
         wm.writeInt(destinationLength);
         
         // Then write the content that guaranteed to be there        
-        wm.writeShort(sender);
+        wm.writeInt(sender);
         wm.writeInt(id);
 
         if (last) { 

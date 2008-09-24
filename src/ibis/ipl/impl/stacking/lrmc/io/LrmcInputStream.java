@@ -16,7 +16,7 @@ public class LrmcInputStream extends InputStream {
     private static final Logger logger
             = Logger.getLogger(LrmcInputStream.class);
     
-    private final short source;       
+    private final int source;       
     
     private final ArrayList<Message> queue = new ArrayList<Message>();
     
@@ -35,7 +35,7 @@ public class LrmcInputStream extends InputStream {
        
     private MessageCache cache; 
            
-    public LrmcInputStream(short source, MessageCache cache) { 
+    public LrmcInputStream(int source, MessageCache cache) { 
         this.source = source;
         this.cache = cache;
     }
@@ -45,7 +45,7 @@ public class LrmcInputStream extends InputStream {
         notifyAll();
     }
 
-    public short getSource() { 
+    public int getSource() { 
         return source;
     }
     

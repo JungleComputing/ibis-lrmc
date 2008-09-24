@@ -31,7 +31,7 @@ public class MessageCache {
         Message tmp = cache;
         while(tmp != null) {
             if(tmp.destinations == null || tmp.destinations.length < count) {
-                tmp.destinations = new short[count];
+                tmp.destinations = new int[count];
             }
             
             tmp = tmp.next;

@@ -14,6 +14,7 @@ import ibis.ipl.Registry;
 import ibis.ipl.RegistryEventHandler;
 import ibis.ipl.SendPort;
 import ibis.ipl.SendPortDisconnectUpcall;
+import ibis.ipl.impl.stacking.lrmc.util.DynamicObjectArray;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -44,7 +45,7 @@ public class LrmcIbis implements Ibis {
         }
 
         public void joined(IbisIdentifier id) {
-             ibis.addIbis(id);
+            ibis.addIbis(id);
             if (h != null) {
                 h.joined(id);
             }
@@ -90,6 +91,7 @@ public class LrmcIbis implements Ibis {
     }
 
     Ibis base;
+    int myID;
     
     PortType[] portTypes;
     IbisCapabilities capabilities;
@@ -98,7 +100,7 @@ public class LrmcIbis implements Ibis {
 
     HashMap<IbisIdentifier, Integer> knownIbis
         = new HashMap<IbisIdentifier, Integer>();
-    ArrayList<IbisIdentifier> ibisList = new ArrayList<IbisIdentifier>();
+    DynamicObjectArray ibisList = new DynamicObjectArray();
     
     LrmcIbis(List<IbisStarter> stack,
             RegistryEventHandler registryEventHandler,
@@ -116,18 +118,46 @@ public class LrmcIbis implements Ibis {
 
         if (!knownIbis.containsKey(ibis)) { 
             knownIbis.put(ibis, new Integer(nextIbisID)); 
-            ibisList.ensureCapacity(nextIbisID+10);
-            ibisList.add(nextIbisID, ibis);
+            ibisList.put(nextIbisID, ibis);
 
             logger.info("Adding Ibis " + nextIbisID + " " + ibis);
 
             if (ibis.equals(identifier())) {                
                 logger.info("I am " + nextIbisID + " " + ibis);
+                myID = nextIbisID;
             }
 
             nextIbisID++;
             notifyAll();
         }        
+    }
+    
+    IbisIdentifier getId(int id) {
+        IbisIdentifier ibisID = (IbisIdentifier) ibisList.get(id);
+
+        if (ibisID == null) {
+            synchronized(this) {
+                try {
+                    wait(10000);
+                } catch(Exception e) {
+                    // ignored              
+                }
+            }
+            return (IbisIdentifier) ibisList.get(id);
+        }
+        return ibisID;
+    }
+    
+    synchronized int getIbisID(IbisIdentifier ibis) {
+        
+        Integer s = knownIbis.get(ibis);
+        
+        if (s != null) { 
+            return s.intValue();
+        } else { 
+            logger.debug("Ibis " + ibis + " not known!");
+            return -1;
+        }
     }
 
     public synchronized void removeIbis(IbisIdentifier ibis) {

@@ -1,5 +1,6 @@
 package ibis.ipl.impl.stacking.lrmc.io;
 
+import ibis.ipl.impl.stacking.lrmc.LabelRoutingMulticast;
 import ibis.ipl.impl.stacking.lrmc.util.Message;
 import ibis.ipl.impl.stacking.lrmc.util.MessageCache;
 
@@ -13,10 +14,10 @@ public class LrmcOutputStream extends OutputStream {
     private static final Logger logger
             = Logger.getLogger(LrmcOutputStream.class);
 
-    private final LableRoutingMulticast mcast;
+    private final LabelRoutingMulticast mcast;
     private final MessageCache cache; 
     
-    int currentID = 1;  
+    public int currentID = 1;  
     private int currentNUM = 0;  
         
     private boolean closed = false;    
@@ -24,7 +25,7 @@ public class LrmcOutputStream extends OutputStream {
     
     private Message message;
     
-    LrmcOutputStream(LableRoutingMulticast mcast, MessageCache cache) { 
+    public LrmcOutputStream(LabelRoutingMulticast mcast, MessageCache cache) { 
         this.mcast = mcast;
         this.cache = cache;
         message = cache.get();        

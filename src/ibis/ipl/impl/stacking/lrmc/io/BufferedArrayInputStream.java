@@ -62,6 +62,10 @@ public final class BufferedArrayInputStream extends DataInputStream {
         this.in = in;
     }
 
+    public LrmcInputStream getInputStream() { 
+        return in;
+    }
+
     public long bytesRead() {
         return bytes - buffered_bytes;
     }
