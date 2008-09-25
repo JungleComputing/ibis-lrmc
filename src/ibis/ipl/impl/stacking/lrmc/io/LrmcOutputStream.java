@@ -11,45 +11,45 @@ import org.apache.log4j.Logger;
 
 public class LrmcOutputStream extends OutputStream {
 
-    private static final Logger logger
-            = Logger.getLogger(LrmcOutputStream.class);
+    private static final Logger logger = Logger
+            .getLogger(LrmcOutputStream.class);
 
     private final LabelRoutingMulticast mcast;
-    private final MessageCache cache; 
-    
-    public int currentID = 1;  
-    private int currentNUM = 0;  
-        
-    private boolean closed = false;    
+    private final MessageCache cache;
+
+    public int currentID = 1;
+    private int currentNUM = 0;
+
+    private boolean closed = false;
     private boolean firstPacket = false;
-    
+
     private Message message;
-    
-    public LrmcOutputStream(LabelRoutingMulticast mcast, MessageCache cache) { 
+
+    public LrmcOutputStream(LabelRoutingMulticast mcast, MessageCache cache) {
         this.mcast = mcast;
         this.cache = cache;
-        message = cache.get();        
+        message = cache.get();
     }
 
-    public void reset() { 
+    public void reset() {
         firstPacket = true;
     }
 
-    public void close() { 
+    public void close() {
         closed = true;
     }
 
-    public int getPrefferedBufferSize() { 
+    public int getPrefferedBufferSize() {
         return mcast.getPrefferedMessageSize();
     }
-    
-    public byte [] getBuffer() { 
+
+    public byte[] getBuffer() {
         return message.buffer;
     }
-    
-    public byte [] write(int off, int len, boolean lastPacket) {
-        
-        if (closed) { 
+
+    public byte[] write(int off, int len, boolean lastPacket) {
+
+        if (closed) {
             logger.info("____ got write(" + len + ") while closed!");
             return null;
         }
@@ -57,29 +57,29 @@ public class LrmcOutputStream extends OutputStream {
         if (firstPacket) {
             firstPacket = false;
             currentNUM = 0;
-        } else { 
+        } else {
             currentNUM++;
         }
-        
+
         message.off = 0;
-        message.len = len;        
+        message.len = len;
 
         if (lastPacket) {
             message.num = currentNUM | Message.LAST_PACKET;
             message.id = currentID++;
-        } else { 
+        } else {
             message.num = currentNUM;
             message.id = currentID;
         }
-                        
-        if (mcast.send(message)) { 
+
+        if (mcast.send(message)) {
             return message.buffer;
-        } 
-        
+        }
+
         message = cache.get();
         return message.buffer;
     }
-           
+
     public void write(int b) throws IOException {
         // Ouch ... fortunately, it is never used...
         write(new byte[] { (byte) (b & 0xff) }, 0, 1);

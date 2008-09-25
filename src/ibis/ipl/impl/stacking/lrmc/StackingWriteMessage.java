@@ -6,10 +6,10 @@ import ibis.ipl.WriteMessage;
 import java.io.IOException;
 
 public class StackingWriteMessage implements WriteMessage {
-    
+
     final WriteMessage base;
     final StackingSendPort port;
-    
+
     public StackingWriteMessage(WriteMessage base, StackingSendPort port) {
         this.base = base;
         this.port = port;
@@ -38,7 +38,7 @@ public class StackingWriteMessage implements WriteMessage {
     public int send() throws IOException {
         return base.send();
     }
-    
+
     public void flush() throws IOException {
         base.flush();
     }

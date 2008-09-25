@@ -17,15 +17,14 @@ import org.apache.log4j.Logger;
 
 public final class LrmcIbisStarter extends ibis.ipl.IbisStarter {
 
-    static final Logger logger
-            = Logger.getLogger("ibis.ipl.impl.stacking.lrmc.LrmcIbisStarter");
+    static final Logger logger = Logger
+            .getLogger("ibis.ipl.impl.stacking.lrmc.LrmcIbisStarter");
 
     static final IbisCapabilities ibisCapabilities = new IbisCapabilities(
-        "nickname.lrmc"
-    );
+            "nickname.lrmc");
 
     private boolean matching;
-    
+
     private PortType[] unmatched;
 
     public LrmcIbisStarter() {
@@ -33,15 +32,15 @@ public final class LrmcIbisStarter extends ibis.ipl.IbisStarter {
     }
 
     static boolean ourPortType(PortType tp) {
-        return (tp.hasCapability(PortType.CONNECTION_MANY_TO_MANY) 
-                || tp.hasCapability(PortType.CONNECTION_ONE_TO_MANY))
-            && ! tp.hasCapability(PortType.COMMUNICATION_RELIABLE)
-            && ! tp.hasCapability(PortType.CONNECTION_UPCALLS)
-            && ! tp.hasCapability(PortType.CONNECTION_DOWNCALLS)
-            && ! tp.hasCapability(PortType.COMMUNICATION_NUMBERED)
-            && ! tp.hasCapability(PortType.COMMUNICATION_FIFO);
+        return (tp.hasCapability(PortType.CONNECTION_MANY_TO_MANY) || tp
+                .hasCapability(PortType.CONNECTION_ONE_TO_MANY))
+                && !tp.hasCapability(PortType.COMMUNICATION_RELIABLE)
+                && !tp.hasCapability(PortType.CONNECTION_UPCALLS)
+                && !tp.hasCapability(PortType.CONNECTION_DOWNCALLS)
+                && !tp.hasCapability(PortType.COMMUNICATION_NUMBERED)
+                && !tp.hasCapability(PortType.COMMUNICATION_FIFO);
     }
-    
+
     public boolean matches(IbisCapabilities capabilities, PortType[] portTypes) {
         ArrayList<PortType> types = new ArrayList<PortType>();
         for (PortType tp : portTypes) {
@@ -54,7 +53,7 @@ public final class LrmcIbisStarter extends ibis.ipl.IbisStarter {
             PortType tp = types.get(i);
             if (ourPortType(tp)) {
                 // Yes, we can do this ...
-                if (! matching) {
+                if (!matching) {
                     // But we need this ....
                     types.add(LrmcIbis.baseType);
                 }
@@ -90,8 +89,8 @@ public final class LrmcIbisStarter extends ibis.ipl.IbisStarter {
     }
 
     public Ibis startIbis(List<IbisStarter> stack,
-            RegistryEventHandler registryEventHandler,
-            Properties userProperties) {
-        return new LrmcIbis(stack, registryEventHandler, capabilities, portTypes, userProperties);
+            RegistryEventHandler registryEventHandler, Properties userProperties) {
+        return new LrmcIbis(stack, registryEventHandler, capabilities,
+                portTypes, userProperties);
     }
 }

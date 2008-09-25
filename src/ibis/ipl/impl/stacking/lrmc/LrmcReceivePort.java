@@ -11,49 +11,45 @@ import ibis.ipl.MessageUpcall;
 import ibis.ipl.NoSuchPropertyException;
 import ibis.ipl.PortType;
 import ibis.ipl.ReadMessage;
-import ibis.ipl.ReceivePortConnectUpcall;
 import ibis.ipl.ReceivePortIdentifier;
 import ibis.ipl.SendPortIdentifier;
 
-public class LrmcReceivePort implements
-        ibis.ipl.ReceivePort {
-      
+// TODO: create thread that actually reads ...
+
+public class LrmcReceivePort implements ibis.ipl.ReceivePort {
+
     private final PortType portType;
     private final LrmcReceivePortIdentifier identifier;
-    private final LrmcIbis ibis;
     private final MessageUpcall upcall;
+    private final Multicaster om;
 
-    public LrmcReceivePort(PortType type, LrmcIbis ibis, String name,
-            MessageUpcall upcall, ReceivePortConnectUpcall connectUpcall,
+    public LrmcReceivePort(Multicaster om, LrmcIbis ibis, MessageUpcall upcall,
             Properties properties) throws IOException {
-        if (connectUpcall != null) {
-            throw new IbisConfigurationException("Connection upcalls are not supported.");
-        }
-        portType = type;
-        identifier = new LrmcReceivePortIdentifier(ibis.identifier(), name);
-        this.ibis = ibis;
+        portType = om.portType;
+        this.om = om;
+        identifier = new LrmcReceivePortIdentifier(ibis.identifier(), om.name);
         this.upcall = upcall;
-        if (upcall != null && ! portType.hasCapability(PortType.RECEIVE_AUTO_UPCALLS)) {
+        if (upcall != null
+                && !portType.hasCapability(PortType.RECEIVE_AUTO_UPCALLS)) {
             throw new IbisConfigurationException(
                     "no connection upcalls requested for this port type");
         }
     }
 
     public void close() throws IOException {
-        // TODO Auto-generated method stub        
+        // TODO Auto-generated method stub
     }
 
     public void close(long timeoutMillis) throws IOException {
-        close();      
+        close();
     }
 
     public SendPortIdentifier[] connectedTo() {
-        // Not supported.
-        return null;
+        throw new IbisConfigurationException("connection downcalls not supported");
     }
 
     public void disableConnections() {
-        // Connection downcalls/upcalls not supported.
+        throw new IbisConfigurationException("connection upcalls not supported");
     }
 
     public void disableMessageUpcalls() {
@@ -61,7 +57,7 @@ public class LrmcReceivePort implements
     }
 
     public void enableConnections() {
-//      Connection downcalls/upcalls not supported.
+        throw new IbisConfigurationException("connection upcalls not supported");
     }
 
     public void enableMessageUpcalls() {
@@ -73,13 +69,11 @@ public class LrmcReceivePort implements
     }
 
     public ReceivePortIdentifier identifier() {
-        // TODO Auto-generated method stub
         return identifier;
     }
 
     public SendPortIdentifier[] lostConnections() {
-        // Connection downcalls/upcalls not supported.
-        return null;
+        throw new IbisConfigurationException("connection downcalls not supported");
     }
 
     public String name() {
@@ -87,12 +81,11 @@ public class LrmcReceivePort implements
     }
 
     public SendPortIdentifier[] newConnections() {
-        // Connection downcalls/upcalls not supported.
-        return null;
+        throw new IbisConfigurationException("connection downcalls not supported");
     }
 
     public ReadMessage poll() throws IOException {
-        // TODO Auto-generated method stub        
+        // TODO Auto-generated method stub
         return null;
     }
 
@@ -109,8 +102,7 @@ public class LrmcReceivePort implements
         if (timeout < 0) {
             throw new IOException("timeout must be a non-negative number");
         }
-        if (timeout > 0 &&
-                ! portType.hasCapability(PortType.RECEIVE_TIMEOUT)) {
+        if (timeout > 0 && !portType.hasCapability(PortType.RECEIVE_TIMEOUT)) {
             throw new IbisConfigurationException(
                     "This port is not configured for receive() with timeout");
         }
@@ -119,7 +111,8 @@ public class LrmcReceivePort implements
         return null;
     }
 
-    public String getManagementProperty(String key) throws NoSuchPropertyException {
+    public String getManagementProperty(String key)
+            throws NoSuchPropertyException {
         throw new NoSuchPropertyException("No properties in LRMCReceivePort");
     }
 
@@ -130,11 +123,13 @@ public class LrmcReceivePort implements
     public void printManagementProperties(PrintStream stream) {
     }
 
-    public void setManagementProperties(Map<String, String> properties) throws NoSuchPropertyException {
+    public void setManagementProperties(Map<String, String> properties)
+            throws NoSuchPropertyException {
         throw new NoSuchPropertyException("No properties in LRMCReceivePort");
     }
 
-    public void setManagementProperty(String key, String value) throws NoSuchPropertyException {
+    public void setManagementProperty(String key, String value)
+            throws NoSuchPropertyException {
         throw new NoSuchPropertyException("No properties in LRMCReceivePort");
     }
 }

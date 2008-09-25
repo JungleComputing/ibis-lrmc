@@ -1,6 +1,6 @@
 package ibis.ipl.impl.stacking.lrmc.util;
 
-public class DynamicObjectArray {
+public class DynamicObjectArray<T> {
 
     private static final int DEFAULT_SIZE = 64;
 
@@ -28,7 +28,7 @@ public class DynamicObjectArray {
         objects = tmp;
     }
 
-    public void put(int index, Object o) {
+    public void put(int index, T o) {
         if (index >= objects.length) {
             resize(index);
         }
@@ -42,11 +42,9 @@ public class DynamicObjectArray {
 
     public void remove(int index) {
         /*
-        if (index > last) {
-            System.err.println("illegal remove in DynamicObjectArray");
-            return;
-        }
-        */
+         * if (index > last) { System.err.println("illegal remove in
+         * DynamicObjectArray"); return; }
+         */
 
         objects[index] = null;
         if (index == last) {
@@ -57,12 +55,13 @@ public class DynamicObjectArray {
         }
     }
 
-    public Object get(int index) {
-        if (index < 0 || index > last) { 
+    @SuppressWarnings("unchecked")
+    public T get(int index) {
+        if (index < 0 || index > last) {
             return null;
         }
 
-        return objects[index];
+        return (T) objects[index];
     }
 
     public int last() {

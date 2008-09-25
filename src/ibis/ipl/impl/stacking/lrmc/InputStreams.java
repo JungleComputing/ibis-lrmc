@@ -10,8 +10,7 @@ public class InputStreams {
 
     private static final int DEFAULT_SIZE = 64;
 
-    private static final Logger logger
-            = Logger.getLogger(InputStreams.class);
+    private static final Logger logger = Logger.getLogger(InputStreams.class);
 
     private LrmcInputStream[] inputStreams = new LrmcInputStream[DEFAULT_SIZE];
 
@@ -26,7 +25,7 @@ public class InputStreams {
     private int last = -1;
 
     private boolean finish = false;
-    
+
     private void add(LrmcInputStream is, int sender) {
         if (sender >= inputStreams.length) {
             resize(sender);
@@ -78,10 +77,10 @@ public class InputStreams {
     }
 
     private LrmcInputStream find(int sender) {
-        if(sender < 0 || sender > last) {
+        if (sender < 0 || sender > last) {
             return null;
         }
-        
+
         return inputStreams[sender];
     }
 
@@ -111,7 +110,7 @@ public class InputStreams {
 
     public synchronized void hasData(LrmcInputStream is) {
         int src = is.getSource();
-        if (! hasData[src] && ! busy[src]) {
+        if (!hasData[src] && !busy[src]) {
             // Fix: Test before setting and incrementing counter (Ceriel)
             // Fix: Don't set hasData while it is busy. This may be incorrect
             // when we are still reading from the stream. We will see if
@@ -119,21 +118,21 @@ public class InputStreams {
             hasData[src] = true;
             if (logger.isDebugEnabled()) {
                 logger.debug("Setting hasData for stream " + src);
-                if (! is.haveData()) {
+                if (!is.haveData()) {
                     logger.debug("Set hasData but no data?", new Throwable());
                 }
             }
             streamsWithData++;
-        
-            if (streamsWithData == 1) { 
+
+            if (streamsWithData == 1) {
                 notifyAll();
             }
         }
     }
 
     public synchronized LrmcInputStream getNextFilledStream() {
-        
-        while (! finish && streamsWithData == 0) {
+
+        while (!finish && streamsWithData == 0) {
             try {
                 wait();
             } catch (Exception e) {
@@ -145,18 +144,18 @@ public class InputStreams {
         }
 
         final int size = inputStreams.length;
-        
-        for (int i=1;i<=size;i++) {
+
+        for (int i = 1; i <= size; i++) {
             if (hasData[(index + i) % size]) {
                 index = (index + i) % size;
                 break;
             }
         }
 
-        if (logger.isDebugEnabled() && ! hasData[index]) {
+        if (logger.isDebugEnabled() && !hasData[index]) {
             logger.debug("GetNextFilledStream returns !hasData stream"
-                    + ", streamsWithData = " + streamsWithData
-                    + ", index = " + index, new Throwable());
+                    + ", streamsWithData = " + streamsWithData + ", index = "
+                    + index, new Throwable());
         }
 
         hasData[index] = false;
@@ -166,10 +165,10 @@ public class InputStreams {
 
         busy[index] = true;
 
-        if (logger.isDebugEnabled() && ! inputStreams[index].haveData()) {
+        if (logger.isDebugEnabled() && !inputStreams[index].haveData()) {
             logger.debug("GetNextFilledStream returns empty stream"
-                    + ", streamsWithData = " + streamsWithData
-                    + ", index = " + index, new Throwable());
+                    + ", streamsWithData = " + streamsWithData + ", index = "
+                    + index, new Throwable());
         }
 
         streamsWithData--;

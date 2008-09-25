@@ -8,13 +8,12 @@ import ibis.io.DataOutputStream;
 import java.io.IOException;
 
 /**
- * This is a complete implementation of <code>DataOutputStream</code>.
- * It is built on top of an <code>OutputStream</code>.
- * There is no need to put any buffering inbetween. This implementation
- * does all the buffering needed.
+ * This is a complete implementation of <code>DataOutputStream</code>. It is
+ * built on top of an <code>OutputStream</code>. There is no need to put any
+ * buffering inbetween. This implementation does all the buffering needed.
  */
-public final class BufferedArrayOutputStream extends DataOutputStream { 
-    
+public final class BufferedArrayOutputStream extends DataOutputStream {
+
     private static final int SIZEOF_CHAR = 2;
 
     private static final int SIZEOF_SHORT = 2;
@@ -26,9 +25,9 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
     private static final int SIZEOF_FLOAT = 4;
 
     private static final int SIZEOF_DOUBLE = 8;
-    
+
     private static boolean DEBUG = false;
-    
+
     /** The underlying <code>OutputStream</code>. */
     private LrmcOutputStream out;
 
@@ -49,8 +48,11 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
 
     /**
      * Constructor.
-     * @param out	the underlying <code>OutputStream</code>
-     * @param bufsz	the buffer size.
+     * 
+     * @param out
+     *            the underlying <code>OutputStream</code>
+     * @param bufsz
+     *            the buffer size.
      */
     public BufferedArrayOutputStream(LrmcOutputStream out, int bufsz) {
         this.out = out;
@@ -74,28 +76,31 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
     /**
      * Checks if there is space for <code>incr</code> more bytes and if not,
      * the buffer is written to the underlying <code>OutputStream</code>.
-     *
-     * @param incr		the space requested
-     * @param forced            always flushes when set.
-     * @exception IOException	in case of trouble.
+     * 
+     * @param incr
+     *            the space requested
+     * @param forced
+     *            always flushes when set.
+     * @exception IOException
+     *                in case of trouble.
      */
     private void flush(int incr, boolean forced) throws IOException {
 
         if (DEBUG) {
             System.err.println("flush(" + incr + ") : " + " "
-                    + (index + incr >= BUF_SIZE) + " " + (index) + " " + 
-                    forced + ")");
+                    + (index + incr >= BUF_SIZE) + " " + (index) + " " + forced
+                    + ")");
         }
 
         if (forced || index + incr > BUF_SIZE) {
             bytes += index;
 
             // The write will return a new buffer for us which is (at least)
-            // the same size as the old one. 
+            // the same size as the old one.
             buffer = out.write(0, index, forced);
-            
-            // Assume we lost the buffer here 
-            index = 0;            
+
+            // Assume we lost the buffer here
+            index = 0;
         }
     }
 
@@ -158,8 +163,7 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         writeArray(b, off, len);
     }
 
-    public void writeArray(boolean[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(boolean[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(boolean[" + off + " ... "
                     + (off + len) + "])");
@@ -179,40 +183,38 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void writeArray(byte[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(byte[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(byte[" + off + " ... " + (off + len)
                     + "])");
         }
-        
-        while (len > (BUF_SIZE-index)) { 
-                                
-            int space = BUF_SIZE-index;
-            
-          //  System.err.println(" ______ copying " + space + " bytes");
-            
-            System.arraycopy(ref, off, buffer, index, space);                
-            
+
+        while (len > (BUF_SIZE - index)) {
+
+            int space = BUF_SIZE - index;
+
+            // System.err.println(" ______ copying " + space + " bytes");
+
+            System.arraycopy(ref, off, buffer, index, space);
+
             index += space;
             len -= space;
             off += space;
-            
+
             // force flush
-            flush(BUF_SIZE+1, false);
+            flush(BUF_SIZE + 1, false);
         }
-        
+
         if (len > 0) {
-            
-       //     System.err.println(" ______* copying " + len + " bytes");
-            
+
+            // System.err.println(" ______* copying " + len + " bytes");
+
             System.arraycopy(ref, off, buffer, index, len);
             index += len;
         }
     }
 
-    public void writeArray(char[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(char[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(char[" + off + " ... " + (off + len)
                     + "])");
@@ -232,8 +234,7 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void writeArray(short[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(short[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(short[" + off + " ... "
                     + (off + len) + "])");
@@ -257,8 +258,7 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void writeArray(int[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(int[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(int[" + off + " ... " + (off + len)
                     + "])");
@@ -282,8 +282,7 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void writeArray(long[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(long[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(long[" + off + " ... " + (off + len)
                     + "])");
@@ -303,8 +302,7 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void writeArray(float[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(float[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(float[" + off + " ... "
                     + (off + len) + "])");
@@ -323,8 +321,7 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void writeArray(double[] ref, int off, int len)
-            throws IOException {
+    public void writeArray(double[] ref, int off, int len) throws IOException {
         if (DEBUG) {
             System.err.println("writeArray(double[" + off + " ... "
                     + (off + len) + "])");
@@ -344,19 +341,19 @@ public final class BufferedArrayOutputStream extends DataOutputStream {
         } while (len != 0);
     }
 
-    public void flush() throws IOException {                      
-        //System.err.println("_____ ignoring flush() ");
+    public void flush() throws IOException {
+        // System.err.println("_____ ignoring flush() ");
     }
 
     public void forcedFlush() throws IOException {
-        
-        //System.err.println(" ____ forced flush() ");
-        //new Exception().printStackTrace(System.err);
-        
+
+        // System.err.println(" ____ forced flush() ");
+        // new Exception().printStackTrace(System.err);
+
         flush(BUF_SIZE + 1, true); /* Forces flush */
         out.flush();
-    }        
-    
+    }
+
     public void finish() {
         // empty
     }

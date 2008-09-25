@@ -1,6 +1,6 @@
 /* $Id: BufferedArrayInputStream.java 3035 2005-06-15 13:52:54Z ceriel $ */
 
-package ibis.ipl.impl.stacking.lrmc.io; 
+package ibis.ipl.impl.stacking.lrmc.io;
 
 import ibis.io.Conversion;
 import ibis.io.DataInputStream;
@@ -9,15 +9,14 @@ import java.io.EOFException;
 import java.io.IOException;
 
 /**
- * This is a complete implementation of <code>DataInputStream</code>.
- * It is built on top of an <code>InputStream</code>.
- * There is no need to put any buffering inbetween. This implementation
- * does all the buffering needed.
+ * This is a complete implementation of <code>DataInputStream</code>. It is
+ * built on top of an <code>InputStream</code>. There is no need to put any
+ * buffering inbetween. This implementation does all the buffering needed.
  */
-public final class BufferedArrayInputStream extends DataInputStream {   
+public final class BufferedArrayInputStream extends DataInputStream {
 
     private static final int SIZEOF_BOOLEAN = 1;
-    
+
     private static final int SIZEOF_CHAR = 2;
 
     private static final int SIZEOF_SHORT = 2;
@@ -29,17 +28,17 @@ public final class BufferedArrayInputStream extends DataInputStream {
     private static final int SIZEOF_FLOAT = 4;
 
     private static final int SIZEOF_DOUBLE = 8;
-    
+
     private static boolean DEBUG = false;
-    
+
     /** The buffer size. */
-    private static final int BUF_SIZE = 8*1024;
+    private static final int BUF_SIZE = 8 * 1024;
 
     /** The underlying <code>InputStream</code>. */
     private LrmcInputStream in;
 
     /** The buffer. */
-    private byte[] buffer = new byte[BUF_SIZE]; 
+    private byte[] buffer = new byte[BUF_SIZE];
 
     private int index, buffered_bytes;
 
@@ -48,7 +47,7 @@ public final class BufferedArrayInputStream extends DataInputStream {
 
     /** Object used to convert primitive types to bytes. */
     private Conversion conversion;
-        
+
     public BufferedArrayInputStream(LrmcInputStream in) {
         this.in = in;
         conversion = Conversion.loadConversion(false);
@@ -57,12 +56,12 @@ public final class BufferedArrayInputStream extends DataInputStream {
     public int bufferSize() {
         return BUF_SIZE;
     }
-    
-    public void setInputStream(LrmcInputStream in) { 
+
+    public void setInputStream(LrmcInputStream in) {
         this.in = in;
     }
 
-    public LrmcInputStream getInputStream() { 
+    public LrmcInputStream getInputStream() {
         return in;
     }
 
@@ -82,7 +81,7 @@ public final class BufferedArrayInputStream extends DataInputStream {
         try {
             byte b = readByte();
             return (b & 0377);
-        } catch(EOFException e) {
+        } catch (EOFException e) {
             return -1;
         }
     }
@@ -105,7 +104,7 @@ public final class BufferedArrayInputStream extends DataInputStream {
         }
         while (buffered_bytes < len) {
             // System.err.println("buffer -> filled from " + index + " with "
-            // 	       + buffered_bytes + " size " + BUF_SIZE + " read " + len);
+            // + buffered_bytes + " size " + BUF_SIZE + " read " + len);
 
             int n = in.read(buffer, index + buffered_bytes, BUF_SIZE
                     - (index + buffered_bytes));
@@ -174,22 +173,22 @@ public final class BufferedArrayInputStream extends DataInputStream {
         }
 
         if (buffered_bytes >= len) {
-            //System.err.println("IN BUF");
+            // System.err.println("IN BUF");
 
             // data is already in the buffer.
-            //	    System.err.println("Data is in buffer -> copying " + index +
-            //	    			" ... " + (index+len) + " to " + off);
+            // System.err.println("Data is in buffer -> copying " + index +
+            // " ... " + (index+len) + " to " + off);
 
             System.arraycopy(buffer, index, a, off, len);
             index += len;
             buffered_bytes -= len;
 
-            //System.err.println("DONE");
+            // System.err.println("DONE");
 
         } else {
             if (buffered_bytes != 0) {
                 // System.err.println("PARTLY IN BUF " + buffered_bytes
-                //         + " " + len);
+                // + " " + len);
                 // first, copy the data we do have to 'a' .
                 System.arraycopy(buffer, index, a, off, buffered_bytes);
             }
@@ -208,8 +207,8 @@ public final class BufferedArrayInputStream extends DataInputStream {
         }
 
         // System.err.print("result -> byte[");
-        // for (int i=0;i<len;i++) { 
-        //     System.err.print(a[off+i] + ",");
+        // for (int i=0;i<len;i++) {
+        // System.err.print(a[off+i] + ",");
         // }
         // System.err.println("]");
     }
@@ -337,7 +336,7 @@ public final class BufferedArrayInputStream extends DataInputStream {
                 useable = buffered_bytes / SIZEOF_INT;
 
                 // System.err.println("converting " + useable + " ints from "
-                //         + off);
+                // + off);
                 conversion.byte2int(buffer, index, a, off, useable);
 
                 len -= useable;
@@ -349,8 +348,8 @@ public final class BufferedArrayInputStream extends DataInputStream {
                 to_convert -= converted;
 
                 // System.err.println("Leftover " + len + " ints to convert, "
-                //         + buffered_bytes + " bytes buffered"
-                //         + to_convert + " bytes to convert");
+                // + buffered_bytes + " bytes buffered"
+                // + to_convert + " bytes to convert");
 
                 // second, copy the leftovers to the start of the buffer.
                 for (int i = 0; i < buffered_bytes; i++) {
@@ -365,14 +364,14 @@ public final class BufferedArrayInputStream extends DataInputStream {
 
         // enough data in the buffer
         // System.err.println("converting " + len + " ints from " + index
-        //         + " to " + off);
+        // + " to " + off);
 
         conversion.byte2int(buffer, index, a, off, len);
         buffered_bytes -= to_convert;
         index += to_convert;
 
         // System.err.println("Done converting int [], buffer contains "
-        //         + buffered_bytes + " bytes (starting at " + index + ")");
+        // + buffered_bytes + " bytes (starting at " + index + ")");
 
     }
 
@@ -592,8 +591,8 @@ public final class BufferedArrayInputStream extends DataInputStream {
 
         if (buffered_bytes >= len) {
             // data is already in the buffer.
-            //	    System.err.println("Data is in buffer -> copying " + index +
-            //	    			" ... " + (index+len) + " to " + off);
+            // System.err.println("Data is in buffer -> copying " + index +
+            // " ... " + (index+len) + " to " + off);
 
             System.arraycopy(buffer, index, a, off, len);
             index += len;
@@ -601,7 +600,7 @@ public final class BufferedArrayInputStream extends DataInputStream {
         } else {
             if (buffered_bytes != 0) {
                 // System.err.println("PARTLY IN BUF " + buffered_bytes
-                //         + " " + len);
+                // + " " + len);
                 // first, copy the data we do have to 'a' .
                 System.arraycopy(buffer, index, a, off, buffered_bytes);
             }
@@ -611,8 +610,7 @@ public final class BufferedArrayInputStream extends DataInputStream {
                 int n = in.read(a, off + rd, len - rd);
                 if (n < 0) {
                     len = rd;
-                }
-                else {
+                } else {
                     rd += n;
                     bytes += n;
                 }
@@ -622,8 +620,8 @@ public final class BufferedArrayInputStream extends DataInputStream {
         }
 
         // System.err.print("result -> byte[");
-        // for (int i=0;i<len;i++) { 
-        //     System.err.print(a[off+i] + ",");
+        // for (int i=0;i<len;i++) {
+        // System.err.print(a[off+i] + ",");
         // }
         // System.err.println("]");
 

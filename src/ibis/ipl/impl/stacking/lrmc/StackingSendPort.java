@@ -20,15 +20,14 @@ import java.util.Properties;
  * Forwarding sendport, for porttypes not handled by this Ibis.
  */
 public class StackingSendPort implements SendPort {
-    
+
     final SendPort base;
-    
+
     /**
-     * Forwards a lostConnection upcall to the user, with the proper
-     * sendport.
+     * Forwards a lostConnection upcall to the user, with the proper sendport.
      */
-    private static final class DisconnectUpcaller
-            implements SendPortDisconnectUpcall {
+    private static final class DisconnectUpcaller implements
+            SendPortDisconnectUpcall {
         StackingSendPort port;
         SendPortDisconnectUpcall upcaller;
 
@@ -38,14 +37,15 @@ public class StackingSendPort implements SendPort {
             this.upcaller = upcaller;
         }
 
-        public void lostConnection(SendPort me,
-                ReceivePortIdentifier johnDoe, Throwable reason) {
+        public void lostConnection(SendPort me, ReceivePortIdentifier johnDoe,
+                Throwable reason) {
             upcaller.lostConnection(port, johnDoe, reason);
         }
     }
-    
+
     public StackingSendPort(PortType type, LrmcIbis ibis, String name,
-            SendPortDisconnectUpcall connectUpcall, Properties props) throws IOException {
+            SendPortDisconnectUpcall connectUpcall, Properties props)
+            throws IOException {
 
         if (connectUpcall != null) {
             connectUpcall = new DisconnectUpcaller(this, connectUpcall);
@@ -55,41 +55,50 @@ public class StackingSendPort implements SendPort {
         }
     }
 
-    
     public void close() throws IOException {
-        base.close();    
+        base.close();
     }
 
-    public void connect(ReceivePortIdentifier receiver) throws ConnectionFailedException {
+    public void connect(ReceivePortIdentifier receiver)
+            throws ConnectionFailedException {
         connect(receiver, 0L, true);
     }
 
-    public void connect(ReceivePortIdentifier receiver, long timeoutMillis, boolean fillTimeout) throws ConnectionFailedException {
+    public void connect(ReceivePortIdentifier receiver, long timeoutMillis,
+            boolean fillTimeout) throws ConnectionFailedException {
         base.connect(receiver, timeoutMillis, fillTimeout);
-        
+
     }
 
-    public ReceivePortIdentifier connect(IbisIdentifier id, String name) throws ConnectionFailedException {
+    public ReceivePortIdentifier connect(IbisIdentifier id, String name)
+            throws ConnectionFailedException {
         return connect(id, name, 0L, true);
     }
 
-    public ReceivePortIdentifier connect(IbisIdentifier id, String name, long timeoutMillis, boolean fillTimeout) throws ConnectionFailedException {
+    public ReceivePortIdentifier connect(IbisIdentifier id, String name,
+            long timeoutMillis, boolean fillTimeout)
+            throws ConnectionFailedException {
         return base.connect(id, name, timeoutMillis, fillTimeout);
     }
 
-    public void connect(ReceivePortIdentifier[] ports) throws ConnectionsFailedException {
-        connect(ports, 0L, true);       
+    public void connect(ReceivePortIdentifier[] ports)
+            throws ConnectionsFailedException {
+        connect(ports, 0L, true);
     }
 
-    public void connect(ReceivePortIdentifier[] ports, long timeoutMillis, boolean fillTimeout) throws ConnectionsFailedException {
-        base.connect(ports, timeoutMillis, fillTimeout);        
+    public void connect(ReceivePortIdentifier[] ports, long timeoutMillis,
+            boolean fillTimeout) throws ConnectionsFailedException {
+        base.connect(ports, timeoutMillis, fillTimeout);
     }
 
-    public ReceivePortIdentifier[] connect(Map<IbisIdentifier, String> ports) throws ConnectionsFailedException {
+    public ReceivePortIdentifier[] connect(Map<IbisIdentifier, String> ports)
+            throws ConnectionsFailedException {
         return connect(ports, 0L, true);
     }
 
-    public ReceivePortIdentifier[] connect(Map<IbisIdentifier, String> ports, long timeoutMillis, boolean fillTimeout) throws ConnectionsFailedException {
+    public ReceivePortIdentifier[] connect(Map<IbisIdentifier, String> ports,
+            long timeoutMillis, boolean fillTimeout)
+            throws ConnectionsFailedException {
         return base.connect(ports, timeoutMillis, fillTimeout);
     }
 
@@ -98,7 +107,7 @@ public class StackingSendPort implements SendPort {
     }
 
     public void disconnect(ReceivePortIdentifier receiver) throws IOException {
-       base.disconnect(receiver);
+        base.disconnect(receiver);
     }
 
     public void disconnect(IbisIdentifier id, String name) throws IOException {
@@ -110,7 +119,7 @@ public class StackingSendPort implements SendPort {
     }
 
     public SendPortIdentifier identifier() {
-            return base.identifier();
+        return base.identifier();
     }
 
     public ReceivePortIdentifier[] lostConnections() {
@@ -118,7 +127,7 @@ public class StackingSendPort implements SendPort {
     }
 
     public String name() {
-            return base.name();
+        return base.name();
     }
 
     public WriteMessage newMessage() throws IOException {
@@ -136,14 +145,14 @@ public class StackingSendPort implements SendPort {
 
     public void setManagementProperties(Map<String, String> properties)
             throws NoSuchPropertyException {
-        base.setManagementProperties(properties);      
+        base.setManagementProperties(properties);
     }
 
     public void setManagementProperty(String key, String val)
             throws NoSuchPropertyException {
         base.setManagementProperty(key, val);
     }
-    
+
     public void printManagementProperties(PrintStream stream) {
         base.printManagementProperties(stream);
     }

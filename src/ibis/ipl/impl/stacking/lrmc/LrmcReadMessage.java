@@ -7,21 +7,20 @@ import ibis.ipl.IbisIdentifier;
 import ibis.ipl.ReadMessage;
 import ibis.ipl.ReceivePort;
 import ibis.ipl.SendPortIdentifier;
-import ibis.ipl.impl.stacking.lrmc.io.BufferedArrayInputStream;
+import ibis.ipl.impl.stacking.lrmc.io.LrmcInputStream;
 
 public class LrmcReadMessage implements ReadMessage {
 
     SerializationInput in;
     boolean isFinished = false;
-    ObjectMulticaster om;
-    private BufferedArrayInputStream bin;
+    Multicaster om;
     long count = 0;
-    
-    public LrmcReadMessage(SerializationInput in, ObjectMulticaster om,
-            BufferedArrayInputStream bin) {
-        this.in = in;
+    LrmcInputStream stream;
+
+    public LrmcReadMessage(Multicaster om, LrmcInputStream stream) {
+        this.in = om.sin;
         this.om = om;
-        this.bin = bin;
+        this.stream = stream;
     }
 
     protected final void checkNotFinished() throws IOException {
@@ -32,9 +31,9 @@ public class LrmcReadMessage implements ReadMessage {
     }
 
     public SendPortIdentifier origin() {
-        int source = bin.getInputStream().getSource();
+        int source = om.bin.getInputStream().getSource();
         IbisIdentifier id = om.lrmc.ibis.getId(source);
-        return new LrmcSendPortIdentifier(id, om.lrmc.getName());
+        return new LrmcSendPortIdentifier(id, om.name);
     }
 
     protected int available() throws IOException {
@@ -184,26 +183,29 @@ public class LrmcReadMessage implements ReadMessage {
     }
 
     public long bytesRead() throws IOException {
-        long cnt = bin.bytesRead();
+        long cnt = om.bin.bytesRead();
         long retval = cnt - count;
         count = cnt;
         return retval;
     }
 
     public long finish() throws IOException {
-        isFinished = true;
-        // TODO Auto-generated method stub
-        return 0;
+        if (!isFinished) {
+            isFinished = true;
+            return om.finalizeRead(stream);
+        }
+        throw new IOException("ReadMessage already finished");
     }
 
     public void finish(IOException exception) {
-        isFinished = true;
-        // TODO Auto-generated method stub
-        
+        if (!isFinished) {
+            isFinished = true;
+            om.finalizeRead(stream);
+        }
     }
 
     public ReceivePort localPort() {
-        return om.lrmc.receive;
+        return om.receivePort;
     }
 
     public long sequenceNumber() {

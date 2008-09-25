@@ -21,8 +21,8 @@ public class StackingReceivePort implements ReceivePort {
     /**
      * This class forwards upcalls with the proper receive port.
      */
-    private static final class ConnectUpcaller
-            implements ReceivePortConnectUpcall {
+    private static final class ConnectUpcaller implements
+            ReceivePortConnectUpcall {
         StackingReceivePort port;
         ReceivePortConnectUpcall upcaller;
 
@@ -37,12 +37,12 @@ public class StackingReceivePort implements ReceivePort {
             return upcaller.gotConnection(port, applicant);
         }
 
-        public void lostConnection(ReceivePort me,
-                SendPortIdentifier johnDoe, Throwable reason) {
+        public void lostConnection(ReceivePort me, SendPortIdentifier johnDoe,
+                Throwable reason) {
             upcaller.lostConnection(port, johnDoe, reason);
         }
     }
-    
+
     /**
      * This class forwards message upcalls with the proper message.
      */
@@ -55,22 +55,23 @@ public class StackingReceivePort implements ReceivePort {
             this.port = port;
         }
 
-        public void upcall(ReadMessage m) throws IOException, ClassNotFoundException {
+        public void upcall(ReadMessage m) throws IOException,
+                ClassNotFoundException {
             upcaller.upcall(new StackingReadMessage(m, port));
         }
     }
-    
-    public StackingReceivePort(PortType type, LrmcIbis ibis,
-            String name, MessageUpcall upcall, ReceivePortConnectUpcall connectUpcall,
-            Properties properties)
-            throws IOException {
+
+    public StackingReceivePort(PortType type, LrmcIbis ibis, String name,
+            MessageUpcall upcall, ReceivePortConnectUpcall connectUpcall,
+            Properties properties) throws IOException {
         if (connectUpcall != null) {
             connectUpcall = new ConnectUpcaller(this, connectUpcall);
         }
         if (upcall != null) {
             upcall = new Upcaller(upcall, this);
         }
-        base = ibis.base.createReceivePort(type, name, upcall, connectUpcall, properties);
+        base = ibis.base.createReceivePort(type, name, upcall, connectUpcall,
+                properties);
     }
 
     public void close() throws IOException {
@@ -148,7 +149,7 @@ public class StackingReceivePort implements ReceivePort {
 
     public void setManagementProperties(Map<String, String> properties)
             throws NoSuchPropertyException {
-        base.setManagementProperties(properties);      
+        base.setManagementProperties(properties);
     }
 
     public void setManagementProperty(String key, String val)
