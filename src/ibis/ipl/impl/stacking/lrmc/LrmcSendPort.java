@@ -41,6 +41,7 @@ public class LrmcSendPort implements SendPort {
         if (message != null) {
             throw new IOException("Close called while a message is alive");
         }
+        om.removeSendPort();
     }
 
     public void connect(ReceivePortIdentifier receiver)

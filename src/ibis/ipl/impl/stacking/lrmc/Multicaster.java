@@ -132,29 +132,6 @@ public class Multicaster implements MessageReceiver {
         return lastBytesWritten;
     }
 
-    LrmcReadMessage explicitReceive() throws IOException {
-
-        LrmcReadMessage result = null;
-        // IOException ioe = null;
-        // ClassNotFoundException cnfe = null;
-
-        // Get the next stream that has some data
-        LrmcInputStream stream = inputStreams.getNextFilledStream();
-
-        if (stream == null) {
-            return null;
-        }
-
-        // Plug it into the deserializer
-        bin.setInputStream(stream);
-        bin.resetBytesRead();
-
-        // Read an object
-
-        result = new LrmcReadMessage(this, stream);
-        return result;
-    }
-
     long finalizeRead(LrmcInputStream stream) {
         inputStreams.returnStream(stream);
         long sz = bin.bytesRead();
@@ -162,7 +139,7 @@ public class Multicaster implements MessageReceiver {
         return sz;
     }
 
-    public LrmcReadMessage receive() throws IOException {
+    public LrmcReadMessage receive() {
         synchronized (this) {
             if (finish) {
                 return null;
@@ -172,7 +149,17 @@ public class Multicaster implements MessageReceiver {
         }
         LrmcReadMessage o;
         try {
-            o = explicitReceive();
+            LrmcInputStream stream = inputStreams.getNextFilledStream();
+
+            if (stream == null) {
+                return null;
+            }
+
+            // Plug it into the deserializer
+            bin.setInputStream(stream);
+            bin.resetBytesRead();
+
+            o = new LrmcReadMessage(this, stream);
         } finally {
             synchronized (this) {
                 receiverDone = true;
@@ -225,6 +212,22 @@ public class Multicaster implements MessageReceiver {
             lrmc.done();
         } catch (IOException e) {
             // ignore, we tried ...
+        }
+    }
+
+    public void removeReceivePort() {
+        receivePort = null;
+        if (sendPort == null) {
+            // Apparently we are done ...
+            done();
+        }
+    }
+    
+    public void removeSendPort() {
+        sendPort = null;
+        if (receivePort == null) {
+            // Apparently we are done ...
+            done();
         }
     }
 }

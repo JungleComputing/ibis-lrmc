@@ -8,6 +8,7 @@ import ibis.ipl.ReadMessage;
 import ibis.ipl.ReceivePort;
 import ibis.ipl.SendPortIdentifier;
 import ibis.ipl.impl.stacking.lrmc.io.LrmcInputStream;
+import ibis.util.ThreadPool;
 
 public class LrmcReadMessage implements ReadMessage {
 
@@ -16,11 +17,16 @@ public class LrmcReadMessage implements ReadMessage {
     Multicaster om;
     long count = 0;
     LrmcInputStream stream;
+    private boolean inUpcall = false;
 
     public LrmcReadMessage(Multicaster om, LrmcInputStream stream) {
         this.in = om.sin;
         this.om = om;
         this.stream = stream;
+    }
+    
+    void setInUpcall(boolean val) {
+        inUpcall = val;
     }
 
     protected final void checkNotFinished() throws IOException {
@@ -191,8 +197,12 @@ public class LrmcReadMessage implements ReadMessage {
 
     public long finish() throws IOException {
         if (!isFinished) {
+            long retval = om.finalizeRead(stream);
+            if (inUpcall) {
+                ThreadPool.createNew(om.receivePort, "ReceivePort");
+            }
             isFinished = true;
-            return om.finalizeRead(stream);
+            return retval;
         }
         throw new IOException("ReadMessage already finished");
     }
@@ -201,6 +211,9 @@ public class LrmcReadMessage implements ReadMessage {
         if (!isFinished) {
             isFinished = true;
             om.finalizeRead(stream);
+            if (inUpcall) {
+                ThreadPool.createNew(om.receivePort, "ReceivePort");
+            }
         }
     }
 
