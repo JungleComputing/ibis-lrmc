@@ -104,6 +104,7 @@ public class LrmcIbis implements Ibis {
             RegistryEventHandler registryEventHandler,
             IbisCapabilities capabilities, PortType[] portTypes,
             Properties userProperties) {
+        logger.info("Constructor LRMC Ibis");
         IbisStarter s = stack.remove(0);
         EventHandler h = new EventHandler(registryEventHandler, this);
         base = s.startIbis(stack, h, userProperties);

@@ -171,6 +171,11 @@ public class LrmcReceivePort implements ibis.ipl.ReceivePort, Runnable {
             throws NoSuchPropertyException {
         throw new NoSuchPropertyException("No properties in LRMCReceivePort");
     }
+
+    synchronized void doFinish() {
+        message = null;
+        notifyAll();
+    }
     
     private boolean doUpcall(LrmcReadMessage msg) {
         synchronized(this) {

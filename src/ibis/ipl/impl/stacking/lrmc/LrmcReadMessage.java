@@ -198,6 +198,7 @@ public class LrmcReadMessage implements ReadMessage {
     public long finish() throws IOException {
         if (!isFinished) {
             long retval = om.finalizeRead(stream);
+            om.receivePort.doFinish();
             if (inUpcall) {
                 ThreadPool.createNew(om.receivePort, "ReceivePort");
             }
@@ -211,6 +212,7 @@ public class LrmcReadMessage implements ReadMessage {
         if (!isFinished) {
             isFinished = true;
             om.finalizeRead(stream);
+            om.receivePort.doFinish();
             if (inUpcall) {
                 ThreadPool.createNew(om.receivePort, "ReceivePort");
             }
