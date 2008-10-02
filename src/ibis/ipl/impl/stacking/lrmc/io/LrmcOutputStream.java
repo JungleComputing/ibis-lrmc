@@ -7,11 +7,12 @@ import ibis.ipl.impl.stacking.lrmc.util.MessageCache;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LrmcOutputStream extends OutputStream {
 
-    private static final Logger logger = Logger
+    private static final Logger logger = LoggerFactory
             .getLogger(LrmcOutputStream.class);
 
     private final LabelRoutingMulticast mcast;

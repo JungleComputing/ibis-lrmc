@@ -4,13 +4,14 @@ import ibis.ipl.impl.stacking.lrmc.io.LrmcInputStream;
 import ibis.ipl.impl.stacking.lrmc.util.Message;
 import ibis.ipl.impl.stacking.lrmc.util.MessageCache;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InputStreams {
 
     private static final int DEFAULT_SIZE = 64;
 
-    private static final Logger logger = Logger.getLogger(InputStreams.class);
+    private static final Logger logger = LoggerFactory.getLogger(InputStreams.class);
 
     private LrmcInputStream[] inputStreams = new LrmcInputStream[DEFAULT_SIZE];
 

@@ -7,13 +7,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //import mcast.lrm.ByteArrayCache;
 
 public class LrmcInputStream extends InputStream {
 
-    private static final Logger logger = Logger
+    private static final Logger logger = LoggerFactory
             .getLogger(LrmcInputStream.class);
 
     private final int source;

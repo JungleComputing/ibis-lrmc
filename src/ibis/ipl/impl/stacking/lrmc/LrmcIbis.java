@@ -23,11 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LrmcIbis implements Ibis {
 
-    private static final Logger logger = Logger.getLogger(LrmcIbis.class);
+    private static final Logger logger = LoggerFactory.getLogger(LrmcIbis.class);
 
     static final PortType baseType = new PortType(PortType.SERIALIZATION_DATA,
             PortType.COMMUNICATION_RELIABLE, PortType.CONNECTION_MANY_TO_ONE,

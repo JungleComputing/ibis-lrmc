@@ -17,13 +17,14 @@ import ibis.ipl.impl.stacking.lrmc.util.MessageQueue;
 import ibis.util.TypedProperties;
 
 import java.io.IOException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LabelRoutingMulticast extends Thread implements MessageUpcall {
 
     private final static int ZOMBIE_THRESHOLD = 10000;
 
-    private static final Logger logger = Logger
+    private static final Logger logger = LoggerFactory
             .getLogger(LabelRoutingMulticast.class);
 
     final LrmcIbis ibis;

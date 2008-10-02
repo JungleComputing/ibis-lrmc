@@ -13,11 +13,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LrmcIbisStarter extends ibis.ipl.IbisStarter {
 
-    static final Logger logger = Logger
+    static final Logger logger = LoggerFactory
             .getLogger("ibis.ipl.impl.stacking.lrmc.LrmcIbisStarter");
 
     static final IbisCapabilities ibisCapabilities = new IbisCapabilities(
